@@ -1,0 +1,32 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>所有文章 - XiNian&#39;s Blog</title>
+        <link>https://xinian888.github.io/posts/</link>
+        <description>所有文章 | XiNian&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>zh-CN</language><managingEditor>bxiaocha@gmail.com (昔年)</managingEditor>
+            <webMaster>bxiaocha@gmail.com (昔年)</webMaster><copyright>This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</copyright><lastBuildDate>Sun, 06 Nov 2022 15:43:45 &#43;0800</lastBuildDate><atom:link href="https://xinian888.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>Hugo博客安装</title>
+    <link>https://xinian888.github.io/hugo%E5%8D%9A%E5%AE%A2%E5%AE%89%E8%A3%85/</link>
+    <pubDate>Sun, 06 Nov 2022 15:43:45 &#43;0800</pubDate>
+    <author>昔年</author>
+    <guid>https://xinian888.github.io/hugo%E5%8D%9A%E5%AE%A2%E5%AE%89%E8%A3%85/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志</title>
+    <link>https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/</link>
+    <pubDate>Sun, 06 Nov 2022 00:19:04 &#43;0800</pubDate>
+    <author>昔年</author>
+    <guid>https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/</guid>
+    <description><![CDATA[]]></description>
+</item>
+<item>
+    <title>1.多节点安装ks&#43;k8s</title>
+    <link>https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/</link>
+    <pubDate>Sat, 05 Nov 2022 22:47:29 &#43;0800</pubDate>
+    <author>昔年</author>
+    <guid>https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/</guid>
+    <description><![CDATA[]]></description>
+</item>
+</channel>
+</rss>

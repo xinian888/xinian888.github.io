@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志 - XiNian&#39;s Blog</title><meta name="Description" content="Hugo theme - LoveIt"><meta property="og:title" content="Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" /><meta property="og:image" content="https://xinian888.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-11-06T00:19:04+08:00" />
+<meta property="article:modified_time" content="2022-11-06T00:19:04+08:00" /><meta property="og:site_name" content="XiNian&#39;s Blog" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://xinian888.github.io/logo.png"/>
+
+<meta name="twitter:title" content="Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志"/>
+<meta name="twitter:description" content=""/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" /><link rel="prev" href="https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" /><link rel="next" href="https://xinian888.github.io/hugo%E5%8D%9A%E5%AE%A2%E5%AE%89%E8%A3%85/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Docker安装搭建loki+promtail+grafana收集容器日志",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/xinian888.github.io\/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97\/"
+        },"image": [{
+                            "@type": "ImageObject",
+                            "url": "https:\/\/xinian888.github.io\/images\/Apple-Devices-Preview.png",
+                            "width":  3200 ,
+                            "height":  2048 
+                        }],"genre": "posts","keywords": "docker, k8s, loki","wordcount":  3239 ,
+        "url": "https:\/\/xinian888.github.io\/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97\/","datePublished": "2022-11-06T00:19:04+08:00","dateModified": "2022-11-06T00:19:04+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/xinian888.github.io\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "昔年"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="XiNian&#39;s Blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw' aria-hidden='true'></i></span>LoveIt</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/categories/documentation/"> 文档 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/dillonzq/LoveIt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw' aria-hidden='true'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a><a href="javascript:void(0);" class="menu-item language" title="选择语言">
+                    <i class="fa fa-globe" aria-hidden="true"></i>                      
+                    <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" selected>简体中文</option></select>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="XiNian&#39;s Blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw' aria-hidden='true'></i></span>LoveIt</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/categories/documentation/" title="">文档</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/dillonzq/LoveIt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw' aria-hidden='true'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a><a href="javascript:void(0);" class="menu-item" title="选择语言">
+                    <i class="fa fa-globe fa-fw" aria-hidden="true"></i>
+                    <select class="language-select" onchange="location = this.value;"><option value="/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" selected>简体中文</option></select>
+                </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Docker安装搭建loki+promtail+grafana收集容器日志</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://xinian888.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>昔年</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/documentation/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>文档</a>&nbsp;<a href="/categories/docker/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>docker</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-11-06">2022-11-06</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 3239 字&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;预计阅读 7 分钟&nbsp;<span id="/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" class="leancloud_visitors" data-flag-title="Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志">
+                        <i class="far fa-eye fa-fw" aria-hidden="true"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1卸载旧版本">1.卸载旧版本</a></li>
+    <li><a href="#2安装docker">2.安装docker</a></li>
+    <li><a href="#3启动docker">3.启动docker</a></li>
+    <li><a href="#4安装docker-compose工具">4.安装docker-compose工具</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1grafana-loki介绍">1.Grafana Loki介绍</a></li>
+    <li><a href="#2系统架构">2.系统架构</a></li>
+    <li><a href="#3安装部署-loki">3.安装部署 Loki</a>
+      <ul>
+        <li><a href="#31使用docker安装">3.1使用docker安装</a>
+          <ul>
+            <li><a href="#修改promtail的配置文件">修改promtail的配置文件</a></li>
+          </ul>
+        </li>
+        <li><a href="#32-使用docker-compose安装">3.2 使用docker-compose安装</a>
+          <ul>
+            <li><a href="#下载docker-composeyml">下载docker-compose.yml</a></li>
+            <li><a href="#修改docker-composeyml">修改docker-compose.yml</a></li>
+            <li><a href="#启动">启动</a></li>
+            <li><a href="#配置grafana">配置grafana</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#1被监控机器安装loki日志插件">1.被监控机器安装Loki日志插件</a></li>
+    <li><a href="#2全局日志搜集设置">2.全局日志搜集设置</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><div align='center' ><font size='6'>docker安装搭建loki+promtail+grafana 收集容器日志</font></div>
+<h1 id="安装部署docker环境">安装部署docker环境</h1>
+<h2 id="1卸载旧版本">1.卸载旧版本</h2>
+<p>旧版本的 Docker 被称为<code>docker</code>或<code>docker-engine</code>. 如果安装了这些，请卸载它们以及相关的依赖项。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">yum remove docker \
+</span></span><span class="line"><span class="cl">                  docker-client \
+</span></span><span class="line"><span class="cl">                  docker-client-latest \
+</span></span><span class="line"><span class="cl">                  docker-common \
+</span></span><span class="line"><span class="cl">                  docker-latest \
+</span></span><span class="line"><span class="cl">                  docker-latest-logrotate \
+</span></span><span class="line"><span class="cl">                  docker-logrotate \
+</span></span><span class="line"><span class="cl">                  docker-engine
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2安装docker">2.安装docker</h2>
+<p>您可以根据需要以不同的方式安装 Docker Engine：</p>
+<ul>
+<li>大多数用户 <a href="https://docs.docker.com/engine/install/centos/#install-using-the-repository" target="_blank" rel="noopener noreffer ">设置 Docker 的存储库</a>并从中安装，以便于安装和升级任务。这是推荐的方法。</li>
+<li>一些用户下载 RPM 包并 <a href="https://docs.docker.com/engine/install/centos/#install-from-a-package" target="_blank" rel="noopener noreffer ">手动安装它</a>并完全手动管理升级。这在诸如在无法访问 Internet 的气隙系统上安装 Docker 等情况下很有用。</li>
+<li>在测试和开发环境中，一些用户选择使用自动化 <a href="https://docs.docker.com/engine/install/centos/#install-using-the-convenience-script" target="_blank" rel="noopener noreffer ">便利脚本</a>来安装 Docker。</li>
+</ul>
+<p>安装<code>yum-utils</code>包（提供<code>yum-config-manager</code> 实用程序）并设置存储库。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">yum install -y yum-utils
+</span></span><span class="line"><span class="cl">yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+</span></span><span class="line"><span class="cl">yum clean all &amp;&amp; yum makecache
+</span></span><span class="line"><span class="cl">yum install -y docker-ce
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>列出并排序您的存储库中可用的版本。此示例按版本号从最高到最低对结果进行排序，并被截断：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">$ yum list docker-ce --showduplicates | sort -r
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">docker-ce.x86_64  3:18.09.1-3.el7                     docker-ce-stable
+</span></span><span class="line"><span class="cl">docker-ce.x86_64  3:18.09.0-3.el7                     docker-ce-stable
+</span></span><span class="line"><span class="cl">docker-ce.x86_64  18.06.1.ce-3.el7                    docker-ce-stable
+</span></span><span class="line"><span class="cl">docker-ce.x86_64  18.06.0.ce-3.el7                    docker-ce-stable
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>返回的列表取决于启用了哪些存储库，并且特定于您的 CentOS 版本（<code>.el7</code>在本例中由后缀表示）。</p>
+</blockquote>
+<h2 id="3启动docker">3.启动docker</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">systemctl start docker
+</span></span><span class="line"><span class="cl">systemctl enable docker
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4安装docker-compose工具">4.安装docker-compose工具</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#国外</span>
+</span></span><span class="line"><span class="cl">curl -L https://github.com/docker/compose/releases/download/v2.10.2/docker-compose-<span class="sb">`</span>uname -s<span class="sb">`</span>-<span class="sb">`</span>uname -m<span class="sb">`</span> -o /usr/local/bin/docker-compose
+</span></span><span class="line"><span class="cl"><span class="c1">#国内</span>
+</span></span><span class="line"><span class="cl">curl -L https://get.daocloud.io/docker/compose/releases/download/v2.10.2/docker-compose-<span class="sb">`</span>uname -s<span class="sb">`</span>-<span class="sb">`</span>uname -m<span class="sb">`</span> -o /usr/local/bin/docker-compose
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">chmod +x /usr/local/bin/docker-compose
+</span></span><span class="line"><span class="cl">docker-compose --version
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>docker-compose 版本：https://github.com/docker/compose/releases</p>
+</blockquote>
+<h1 id="安装部署grafana-loki">安装部署Grafana Loki</h1>
+<h2 id="1grafana-loki介绍">1.Grafana Loki介绍</h2>
+<p><strong>Grafana Loki 是什么？</strong></p>
+<p>Loki 是一个水平可扩展，高可用性，多租户的 <code>日志聚合系统</code>
+。它的设计非常经济高效且易于操作，因为它不会为日志内容编制索引，而是为每个日志流编制一组标签。</p>
+<p>Loki 组成：</p>
+<ol>
+<li>loki : 主服务器，负责存储日志和处理查询</li>
+<li>promtail : 代理，负责收集日志并将其发送给 loki</li>
+<li>Grafana : Go语言开发的开源数据可视化工具，可以做数据监控和数据统计，带有告警功能</li>
+</ol>
+<p>官网：https://grafana.com/oss/loki         Loki : <a href="https://github.com/grafana/loki" target="_blank" rel="noopener noreffer ">https://github.com/grafana/loki</a></p>
+<blockquote>
+<p>与其他日志聚合系统相比，Loki具有下面的一些特性：</p>
+<ul>
+<li>不对日志进行全文索引（vs ELK技）。通过存储压缩非结构化日志和仅索引元数据，Loki 操作起来会更简单，更省成本。</li>
+<li>通过使用与 Prometheus 相同的标签记录流对日志进行索引和分组，这使得日志的扩展和操作效率更高。</li>
+<li>特别适合储存 Kubernetes Pod 日志; 诸如 Pod 标签之类的元数据会被自动删除和编入索引。受 Grafana 原生支持。</li>
+</ul>
+</blockquote>
+<h2 id="2系统架构">2.系统架构</h2>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="http://cdn.linuxwf.com/img/loki.png"
+        data-srcset="http://cdn.linuxwf.com/img/loki.png, http://cdn.linuxwf.com/img/loki.png 1.5x, http://cdn.linuxwf.com/img/loki.png 2x"
+        data-sizes="auto"
+        alt="http://cdn.linuxwf.com/img/loki.png"
+        title="http://cdn.linuxwf.com/img/loki.png" /></p>
+<p>Promtail收集并将日志发送给Loki的 Distributor 组件</p>
+<p>Distributor会对接收到的日志流进行正确性校验，并将验证后的日志分批并行发送到Ingester</p>
+<p>Ingester 接受日志流并构建数据块，压缩后存放到所连接的存储后端</p>
+<p>Querier 收到HTTP查询请求，并将请求发送至Ingester 用以获取内存数据 ，Ingester 收到请求后返回符合条件的数据 ；</p>
+<p>如果 Ingester 没有返回数据，Querier 会从后端存储加载数据并遍历去重执行查询 ，通过HTTP返回查询结果。</p>
+<p><strong>Loki与ELK比较</strong></p>
+<ul>
+<li>ELK功能丰富，但是架构复杂，资源占用高，很多功能系统用不上，造成很多资源浪费。</li>
+<li>ELK进行全文索引。安装部署复杂。</li>
+<li>Loki不对日志全文索引。通过存储压缩非结构化日志和仅索引元数据，Loki 操作起来会更简单，更省成本。</li>
+<li>Loki通过使用与 Prometheus 相同的标签记录流对日志进行索引和分组，这使得日志的扩展和操作效率更高。</li>
+<li>Loki安装部署简单快速，且受 Grafana 原生支持。</li>
+</ul>
+<p>假如系统依赖于ES，建议使用ELK作为日志系统。若系统不依赖ES，选择用Loki。</p>
+<h2 id="3安装部署-loki">3.安装部署 Loki</h2>
+<p><a href="https://grafana.com/docs/loki/latest/installation/docker/" target="_blank" rel="noopener noreffer ">官网安装文档</a></p>
+<h3 id="31使用docker安装">3.1使用docker安装</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#创建目录</span>
+</span></span><span class="line"><span class="cl">mkdir -p /data/loki/conf
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> /data/loki/conf
+</span></span><span class="line"><span class="cl"><span class="c1">#下载配置文件</span>
+</span></span><span class="line"><span class="cl">wget https://raw.githubusercontent.com/grafana/loki/v2.6.1/cmd/loki/loki-local-config.yaml -O loki-config.yaml
+</span></span><span class="line"><span class="cl">wget https://raw.githubusercontent.com/grafana/loki/v2.6.1/clients/cmd/promtail/promtail-docker-config.yaml -O promtail-config.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>修改loki-config配置文件</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">vim loki-config.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">auth_enabled: <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">server:
+</span></span><span class="line"><span class="cl">  http_listen_port: <span class="m">3100</span>
+</span></span><span class="line"><span class="cl">  grpc_listen_port: <span class="m">9096</span>
+</span></span><span class="line"><span class="cl">  grpc_server_max_recv_msg_size: <span class="m">15728640</span>  <span class="c1">#grpc最大接收消息值，默认4m</span>
+</span></span><span class="line"><span class="cl">  grpc_server_max_send_msg_size: <span class="m">15728640</span>  <span class="c1">#grpc最大发送消息值，默认4m</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">common:
+</span></span><span class="line"><span class="cl">  path_prefix: /tmp/loki
+</span></span><span class="line"><span class="cl">  storage:
+</span></span><span class="line"><span class="cl">    filesystem:
+</span></span><span class="line"><span class="cl">      chunks_directory: /tmp/loki/chunks
+</span></span><span class="line"><span class="cl">      rules_directory: /tmp/loki/rules
+</span></span><span class="line"><span class="cl">  replication_factor: <span class="m">1</span>
+</span></span><span class="line"><span class="cl">  ring:
+</span></span><span class="line"><span class="cl">    instance_addr: 127.0.0.1
+</span></span><span class="line"><span class="cl">    kvstore:
+</span></span><span class="line"><span class="cl">      store: inmemory
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">schema_config:
+</span></span><span class="line"><span class="cl">  configs:
+</span></span><span class="line"><span class="cl">    - from: 2020-10-24
+</span></span><span class="line"><span class="cl">      store: boltdb-shipper
+</span></span><span class="line"><span class="cl">      object_store: filesystem
+</span></span><span class="line"><span class="cl">      schema: v11
+</span></span><span class="line"><span class="cl">      index:
+</span></span><span class="line"><span class="cl">        prefix: index_
+</span></span><span class="line"><span class="cl">        period: 24h
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">limits_config:
+</span></span><span class="line"><span class="cl">  enforce_metric_name: <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">  reject_old_samples: <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  reject_old_samples_max_age: 168h
+</span></span><span class="line"><span class="cl">  ingestion_rate_mb: <span class="m">30</span>
+</span></span><span class="line"><span class="cl">  ingestion_burst_size_mb: <span class="m">15</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">chunk_store_config:
+</span></span><span class="line"><span class="cl">  max_look_back_period: 168h <span class="c1">#回看日志行的最大时间，只适用于即时日志</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">table_manager:
+</span></span><span class="line"><span class="cl">  retention_deletes_enabled: <span class="nb">true</span> <span class="c1">#日志保留周期开关，默认为false</span>
+</span></span><span class="line"><span class="cl">  retention_period: 168h <span class="c1">#日志保留周期</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ruler:
+</span></span><span class="line"><span class="cl">  alertmanager_url: http://localhost:9093
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="修改promtail的配置文件">修改promtail的配置文件</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">vim promtail-config.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">server:
+</span></span><span class="line"><span class="cl">  http_listen_port: <span class="m">9080</span>
+</span></span><span class="line"><span class="cl">  grpc_listen_port: <span class="m">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">positions:
+</span></span><span class="line"><span class="cl">  filename: /tmp/positions.yaml
+</span></span><span class="line"><span class="cl">  sync_period: 10s <span class="c1">#10秒钟同步一次</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#Loki服务器的地址，修改IP和端口即可，后面Grafana要从这个地方取数据</span>
+</span></span><span class="line"><span class="cl">clients:
+</span></span><span class="line"><span class="cl">  - url: http://YOUR_IP:3100/loki/api/v1/push
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 数据抓取配置</span>
+</span></span><span class="line"><span class="cl">scrape_configs:
+</span></span><span class="line"><span class="cl">- job_name: system    			<span class="c1">#任务名称，应该具有唯一性</span>
+</span></span><span class="line"><span class="cl">  static_configs:
+</span></span><span class="line"><span class="cl">  - targets:
+</span></span><span class="line"><span class="cl">      - localhost				<span class="c1">#抓取目标，本地</span>
+</span></span><span class="line"><span class="cl">    labels:
+</span></span><span class="line"><span class="cl">      job: varlogs				<span class="c1">#标签名，用于筛选数据，最好取一个易于识别的名称</span>
+</span></span><span class="line"><span class="cl">      __path__: /var/log/*log	<span class="c1">#收集日志的路径，“*”是通配符，支持正则匹配</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>安装Loki</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker run --name loki -d -v <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/mnt/config -p 3100:3100 grafana/loki:2.6.1 -config.file<span class="o">=</span>/mnt/config/loki-config.yaml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#查看metrics数据</span>
+</span></span><span class="line"><span class="cl">http://IP:3100/metrics
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#查看loki运行状态</span>
+</span></span><span class="line"><span class="cl">http://IP:3100/ready
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>安装promtail</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker run --name promtail -d -v <span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>:/mnt/config -v /var/log:/var/log --link loki grafana/promtail:2.6.1 -config.file<span class="o">=</span>/mnt/config/promtail-config.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>安装grafana</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker run -d --name grafana <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --restart always <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --privileged<span class="o">=</span><span class="nb">true</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  --user root <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -p 3000:3000 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -v /data/loki/grafana-storage:/var/lib/grafana <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  grafana/grafana
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p><span style="display:block;color:orangered;">安装报错：</span></p>
+<p>GF_PATHS_DATA=&rsquo;/var/lib/grafana&rsquo; is not writable.
+You may have issues with file permissions, more information here: <a href="http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later" target="_blank" rel="noopener noreffer ">http://docs.grafana.org/installation/docker/#migrate-to-v51-or-later</a>
+mkdir: can&rsquo;t create directory &lsquo;/var/lib/grafana/plugins&rsquo;: Permission denied</p>
+<p><span style="display:block;color:orangered;">解决办法：</span></p>
+<p>启动容器时加上一行 <code>--user root</code></p>
+</blockquote>
+<p>打开 http://IP:3000 访问grafana，默认用户密码为admin/admin。</p>
+<p>选择左侧设置—&gt;Data Sources—&gt;Add data source，搜索Loki配置HTTP URL为 http://IP:3100</p>
+<p>完成后选择左侧设置—&gt;Preferences，修改底部默认时区为 Asia/Shanghai。</p>
+<p>选择左侧Explore查看日志，可以基于文件名或标签查看.</p>
+<h3 id="32-使用docker-compose安装">3.2 使用docker-compose安装</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir -p /data/<span class="o">{</span>loki,loki-config,promtail-config,grafana-data<span class="o">}</span>
+</span></span><span class="line"><span class="cl">mkdir /var/log/promtail
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/data/
+</span></span><span class="line"><span class="cl">├── docker-compose.yaml
+</span></span><span class="line"><span class="cl">├── docker-compose.yaml.bak
+</span></span><span class="line"><span class="cl">├── grafana-data 
+</span></span><span class="line"><span class="cl">├── loki
+</span></span><span class="line"><span class="cl">├── loki-config
+</span></span><span class="line"><span class="cl">│   └── local-config.yaml
+</span></span><span class="line"><span class="cl">└── promtail-config
+</span></span><span class="line"><span class="cl">    └── config.yml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>修改loki配置文件 local-config.yaml</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">auth_enabled: <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">server:
+</span></span><span class="line"><span class="cl">  http_listen_port: <span class="m">3100</span>
+</span></span><span class="line"><span class="cl">  grpc_listen_port: <span class="m">9096</span>
+</span></span><span class="line"><span class="cl">  grpc_server_max_recv_msg_size: <span class="m">15728640</span>  <span class="c1">#grpc最大接收消息值，默认4m</span>
+</span></span><span class="line"><span class="cl">  grpc_server_max_send_msg_size: <span class="m">15728640</span>  <span class="c1">#grpc最大发送消息值，默认4m</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">common:
+</span></span><span class="line"><span class="cl">  path_prefix: /loki
+</span></span><span class="line"><span class="cl">  storage:
+</span></span><span class="line"><span class="cl">    filesystem:
+</span></span><span class="line"><span class="cl">      chunks_directory: /loki/chunks
+</span></span><span class="line"><span class="cl">      rules_directory: /loki/rules
+</span></span><span class="line"><span class="cl">  replication_factor: <span class="m">1</span>
+</span></span><span class="line"><span class="cl">  ring:
+</span></span><span class="line"><span class="cl">    instance_addr: 127.0.0.1
+</span></span><span class="line"><span class="cl">    kvstore:
+</span></span><span class="line"><span class="cl">      store: inmemory
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">schema_config:
+</span></span><span class="line"><span class="cl">  configs:
+</span></span><span class="line"><span class="cl">    - from: 2020-10-24
+</span></span><span class="line"><span class="cl">      store: boltdb-shipper
+</span></span><span class="line"><span class="cl">      object_store: filesystem
+</span></span><span class="line"><span class="cl">      schema: v11
+</span></span><span class="line"><span class="cl">      index:
+</span></span><span class="line"><span class="cl">        prefix: index_
+</span></span><span class="line"><span class="cl">        period: 24h
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">limits_config:
+</span></span><span class="line"><span class="cl">  enforce_metric_name: <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">  reject_old_samples: <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  reject_old_samples_max_age: 168h
+</span></span><span class="line"><span class="cl">  ingestion_rate_mb: <span class="m">30</span>
+</span></span><span class="line"><span class="cl">  ingestion_burst_size_mb: <span class="m">15</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">chunk_store_config:
+</span></span><span class="line"><span class="cl">  max_look_back_period: 168h <span class="c1">#回看日志行的最大时间，只适用于即时日志</span>
+</span></span><span class="line"><span class="cl"> 
+</span></span><span class="line"><span class="cl">table_manager:
+</span></span><span class="line"><span class="cl">  retention_deletes_enabled: <span class="nb">true</span> <span class="c1">#日志保留周期开关，默认为false</span>
+</span></span><span class="line"><span class="cl">  retention_period: 168h <span class="c1">#日志保留周期</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">ruler:
+</span></span><span class="line"><span class="cl">  alertmanager_url: http://localhost:9093
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="下载docker-composeyml">下载docker-compose.yml</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> /data
+</span></span><span class="line"><span class="cl">wget https://raw.githubusercontent.com/grafana/loki/v2.6.1/production/docker-compose.yaml -O docker-compose.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="修改docker-composeyml">修改docker-compose.yml</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">version: <span class="s2">&#34;3&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">networks:
+</span></span><span class="line"><span class="cl">  loki:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">services:
+</span></span><span class="line"><span class="cl">  loki:
+</span></span><span class="line"><span class="cl">    image: grafana/loki:2.6.1
+</span></span><span class="line"><span class="cl">    container_name: loki
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">TZ</span><span class="o">=</span>Asia/Shanghai
+</span></span><span class="line"><span class="cl">      - <span class="nv">LANG</span><span class="o">=</span>zh_CN.UTF-8
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    privileged: <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    user: root
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;3100:3100&#34;</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">          - <span class="s2">&#34;/data/loki-config:/etc/loki&#34;</span>
+</span></span><span class="line"><span class="cl">          - <span class="s2">&#34;/data/loki:/loki&#34;</span>
+</span></span><span class="line"><span class="cl">    command: -config.file<span class="o">=</span>/etc/loki/local-config.yaml
+</span></span><span class="line"><span class="cl">    networks:
+</span></span><span class="line"><span class="cl">      - loki
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  promtail:
+</span></span><span class="line"><span class="cl">    image: grafana/promtail:2.6.1
+</span></span><span class="line"><span class="cl">    container_name: promtail
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">TZ</span><span class="o">=</span>Asia/Shanghai
+</span></span><span class="line"><span class="cl">      - <span class="nv">LANG</span><span class="o">=</span>zh_CN.UTF-8
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    privileged: <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    user: root
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">          - <span class="s2">&#34;/var/log/promtail:/var/log&#34;</span>
+</span></span><span class="line"><span class="cl">          - <span class="s2">&#34;/data/promtail-config:/etc/promtail&#34;</span>
+</span></span><span class="line"><span class="cl">    command: -config.file<span class="o">=</span>/etc/promtail/config.yml
+</span></span><span class="line"><span class="cl">    networks:
+</span></span><span class="line"><span class="cl">      - loki
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  grafana:
+</span></span><span class="line"><span class="cl">    image: grafana/grafana:latest
+</span></span><span class="line"><span class="cl">    container_name: grafana
+</span></span><span class="line"><span class="cl">    environment:
+</span></span><span class="line"><span class="cl">      - <span class="nv">TZ</span><span class="o">=</span>Asia/Shanghai
+</span></span><span class="line"><span class="cl">      - <span class="nv">LANG</span><span class="o">=</span>zh_CN.UTF-8
+</span></span><span class="line"><span class="cl">    restart: always
+</span></span><span class="line"><span class="cl">    privileged: <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    user: root
+</span></span><span class="line"><span class="cl">    ports:
+</span></span><span class="line"><span class="cl">      - <span class="s2">&#34;3000:3000&#34;</span>
+</span></span><span class="line"><span class="cl">    volumes:
+</span></span><span class="line"><span class="cl">          - <span class="s2">&#34;/data/grafana-data:/var/lib/grafana&#34;</span>
+</span></span><span class="line"><span class="cl">    networks:
+</span></span><span class="line"><span class="cl">      - loki
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="启动">启动</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker-compose -f docker-compose.yaml up -d
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="配置grafana">配置grafana</h4>
+<ol>
+<li>
+<p>打开 http://IP:3000 访问grafana，默认用户密码为admin/admin。</p>
+</li>
+<li>
+<p>选择左侧设置—&gt;Data Sources—&gt;Add data source，搜索Loki配置HTTP URL为 http://IP:3100</p>
+</li>
+<li>
+<p>完成后选择左侧设置—&gt;Preferences，修改底部默认时区为 Asia/Shanghai。</p>
+</li>
+<li>
+<p>选择左侧Explore查看日志，可以基于文件名或标签查看.</p>
+</li>
+</ol>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="http://cdn.linuxwf.com/img/20220909131103.png"
+        data-srcset="http://cdn.linuxwf.com/img/20220909131103.png, http://cdn.linuxwf.com/img/20220909131103.png 1.5x, http://cdn.linuxwf.com/img/20220909131103.png 2x"
+        data-sizes="auto"
+        alt="http://cdn.linuxwf.com/img/20220909131103.png"
+        title="http://cdn.linuxwf.com/img/20220909131103.png" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="http://cdn.linuxwf.com/img/20220909131410.png"
+        data-srcset="http://cdn.linuxwf.com/img/20220909131410.png, http://cdn.linuxwf.com/img/20220909131410.png 1.5x, http://cdn.linuxwf.com/img/20220909131410.png 2x"
+        data-sizes="auto"
+        alt="http://cdn.linuxwf.com/img/20220909131410.png"
+        title="http://cdn.linuxwf.com/img/20220909131410.png" /></p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="http://cdn.linuxwf.com/img/20220909130741.png"
+        data-srcset="http://cdn.linuxwf.com/img/20220909130741.png, http://cdn.linuxwf.com/img/20220909130741.png 1.5x, http://cdn.linuxwf.com/img/20220909130741.png 2x"
+        data-sizes="auto"
+        alt="http://cdn.linuxwf.com/img/20220909130741.png"
+        title="http://cdn.linuxwf.com/img/20220909130741.png" /></p>
+<h1 id="监控docker日志">监控docker日志</h1>
+<h2 id="1被监控机器安装loki日志插件">1.被监控机器安装Loki日志插件</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
+</span></span><span class="line"><span class="cl">docker plugin ls
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当有新版本时, 更新plugins</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">docker plugin disable loki --force
+</span></span><span class="line"><span class="cl">docker plugin upgrade loki grafana/loki-docker-driver:latest --grant-all-permissions
+</span></span><span class="line"><span class="cl">docker plugin <span class="nb">enable</span> loki
+</span></span><span class="line"><span class="cl">systemctl restart docker
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2全局日志搜集设置">2.全局日志搜集设置</h2>
+<p><strong>对于loki的docker plugin有两种使用方式</strong></p>
+<p>配置daemon.json,收集此后创建的所有容器的日志(注意，是配置daemon.json后重启docker服务后创建的容器才会把日志输出到loki)。
+新建容器时指定logging类型为loki，这样只有指定了logging的容器才会输出到loki</p>
+<p>编辑daemon.json。linux下默认路径是/etc/docker/daemon.json (需要sudo)， windows则默认是%userprofile%.docker\daemon.json</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">vim /etc/docker/daemon.json
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;log-driver&#34;</span>: <span class="s2">&#34;loki&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;log-opts&#34;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;loki-url&#34;</span>: <span class="s2">&#34;http://YOUR_IP:3100/loki/api/v1/push&#34;</span>,
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;loki-batch-size&#34;</span>: <span class="s2">&#34;400&#34;</span>,
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;max-size&#34;</span>: <span class="s2">&#34;50m&#34;</span>,
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;max-file&#34;</span>: <span class="s2">&#34;10&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">systemctl daemon-reload
+</span></span><span class="line"><span class="cl">systemctl restart docker
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="好用的grafana模板下载">好用的grafana模板下载</h1>
+<p><a href="https://grafana.com/dashboards" target="_blank" rel="noopener noreffer ">https://grafana.com/dashboards</a></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Spring Boot Statistics
+</span></span><span class="line"><span class="cl">	<span class="m">6756</span>
+</span></span><span class="line"><span class="cl"><span class="m">1</span> Node Exporter <span class="k">for</span> Prometheus Dashboard EN <span class="m">20201010</span>
+</span></span><span class="line"><span class="cl">	<span class="m">11074</span>
+</span></span><span class="line"><span class="cl">Docker and system monitoring
+</span></span><span class="line"><span class="cl">	<span class="m">893</span>
+</span></span><span class="line"><span class="cl">Docker Container <span class="p">&amp;</span> Host Metrics
+</span></span><span class="line"><span class="cl">	<span class="m">10619</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-11-06</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" data-title="Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志" data-hashtags="docker,k8s,loki"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" data-hashtag="docker"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" data-title="Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" data-title="Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" data-title="Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志" data-ralateuid="xxxx"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/docker/">docker</a>,&nbsp;<a href="/tags/k8s/">k8s</a>,&nbsp;<a href="/tags/loki/">loki</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" class="prev" rel="prev" title="1.多节点安装ks&#43;k8s"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>1.多节点安装ks+k8s</a>
+            <a href="/hugo%E5%8D%9A%E5%AE%A2%E5%AE%89%E8%A3%85/" class="next" rel="next" title="Hugo博客安装">Hugo博客安装<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.105.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://xinian888.github.io" target="_blank">昔年</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/css/lightgallery-bundle.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.5.0/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.13.1/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/thumbnail/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/zoom/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":50},"comment":{"valine":{"appId":"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI","appKey":"WBmoGyJtbqUswvfLh6L8iEBr","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"zh-CN","pageSize":10,"placeholder":"你的评论 ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"lightgallery":true,"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>

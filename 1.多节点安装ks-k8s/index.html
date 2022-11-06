@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>1.多节点安装ks&#43;k8s - XiNian&#39;s Blog</title><meta name="Description" content="Hugo theme - LoveIt"><meta property="og:title" content="1.多节点安装ks&#43;k8s" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" /><meta property="og:image" content="https://xinian888.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-11-05T22:47:29+08:00" />
+<meta property="article:modified_time" content="2022-11-05T22:47:29+08:00" /><meta property="og:site_name" content="XiNian&#39;s Blog" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://xinian888.github.io/logo.png"/>
+
+<meta name="twitter:title" content="1.多节点安装ks&#43;k8s"/>
+<meta name="twitter:description" content=""/>
+<meta name="application-name" content="LoveIt">
+<meta name="apple-mobile-web-app-title" content="LoveIt"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" /><link rel="next" href="https://xinian888.github.io/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "1.多节点安装ks+k8s",
+        "inLanguage": "zh-CN",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/xinian888.github.io\/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s\/"
+        },"image": [{
+                            "@type": "ImageObject",
+                            "url": "https:\/\/xinian888.github.io\/images\/Apple-Devices-Preview.png",
+                            "width":  3200 ,
+                            "height":  2048 
+                        }],"genre": "posts","keywords": "KubeSphere, k8s","wordcount":  2609 ,
+        "url": "https:\/\/xinian888.github.io\/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s\/","datePublished": "2022-11-05T22:47:29+08:00","dateModified": "2022-11-05T22:47:29+08:00","license": "This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": {
+                    "@type": "ImageObject",
+                    "url": "https:\/\/xinian888.github.io\/images\/avatar.png",
+                    "width":  528 ,
+                    "height":  560 
+                }},"author": {
+                "@type": "Person",
+                "name": "昔年"
+            },"description": ""
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="XiNian&#39;s Blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw' aria-hidden='true'></i></span>LoveIt</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> 所有文章 </a><a class="menu-item" href="/tags/"> 标签 </a><a class="menu-item" href="/categories/"> 分类 </a><a class="menu-item" href="/categories/documentation/"> 文档 </a><a class="menu-item" href="/about/"> 关于 </a><a class="menu-item" href="https://github.com/dillonzq/LoveIt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw' aria-hidden='true'></i>  </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-desktop">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-desktop" title="搜索">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-desktop" title="清空">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </span><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a><a href="javascript:void(0);" class="menu-item language" title="选择语言">
+                    <i class="fa fa-globe" aria-hidden="true"></i>                      
+                    <select class="language-select" id="language-select-desktop" onchange="location = this.value;"><option value="/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" selected>简体中文</option></select>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="XiNian&#39;s Blog"><span class="header-title-pre"><i class='far fa-kiss-wink-heart fa-fw' aria-hidden='true'></i></span>LoveIt</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="搜索文章标题或内容..." id="search-input-mobile">
+                        <a href="javascript:void(0);" class="search-button search-toggle" id="search-toggle-mobile" title="搜索">
+                            <i class="fas fa-search fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="search-button search-clear" id="search-clear-mobile" title="清空">
+                            <i class="fas fa-times-circle fa-fw" aria-hidden="true"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin" aria-hidden="true"></i>
+                        </span>
+                    </div>
+                    <a href="javascript:void(0);" class="search-cancel" id="search-cancel-mobile">
+                        取消
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">所有文章</a><a class="menu-item" href="/tags/" title="">标签</a><a class="menu-item" href="/categories/" title="">分类</a><a class="menu-item" href="/categories/documentation/" title="">文档</a><a class="menu-item" href="/about/" title="">关于</a><a class="menu-item" href="https://github.com/dillonzq/LoveIt" title="GitHub" rel="noopener noreffer" target="_blank"><i class='fab fa-github fa-fw' aria-hidden='true'></i></a><a href="javascript:void(0);" class="menu-item theme-switch" title="切换主题">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a><a href="javascript:void(0);" class="menu-item" title="选择语言">
+                    <i class="fa fa-globe fa-fw" aria-hidden="true"></i>
+                    <select class="language-select" onchange="location = this.value;"><option value="/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" selected>简体中文</option></select>
+                </a></div>
+    </div>
+</header><div class="search-dropdown desktop">
+        <div id="search-dropdown-desktop"></div>
+    </div>
+    <div class="search-dropdown mobile">
+        <div id="search-dropdown-mobile"></div>
+    </div><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">目录</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">1.多节点安装ks+k8s</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://xinian888.github.io" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>昔年</a></span>&nbsp;<span class="post-category">收录于 <a href="/categories/kubesphere/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>KubeSphere</a>&nbsp;<a href="/categories/documentation/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>文档</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2022-11-05">2022-11-05</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;约 2609 字&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;预计阅读 6 分钟&nbsp;<span id="/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" class="leancloud_visitors" data-flag-title="1.多节点安装ks&#43;k8s">
+                        <i class="far fa-eye fa-fw" aria-hidden="true"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;次阅读
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>目录</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-创建示例配置文件">1. 创建示例配置文件</a></li>
+    <li><a href="#2-编辑配置文件">2. 编辑配置文件</a></li>
+    <li><a href="#3-使用配置文件创建集群">3. 使用配置文件创建集群</a></li>
+    <li><a href="#4-验证安装">4. 验证安装</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#1注册账号">1.注册账号</a></li>
+    <li><a href="#2创建虚拟网络">2.创建虚拟网络</a></li>
+    <li><a href="#3配置网段">3.配置网段</a></li>
+    <li><a href="#4客户端配置">4.客户端配置</a></li>
+    <li><a href="#5moon节点配置">5.moon节点配置</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h1 id="概念">概念</h1>
+<p>多节点集群由至少一个主节点和一个工作节点组成。您可以使用任何节点作为任务机来执行安装任务，也可以在安装之前或之后根据需要新增节点（例如，为了实现高可用性）。</p>
+<ul>
+<li>Control plane node：主节点，通常托管控制平面，控制和管理整个系统。</li>
+<li>Worker node：工作节点，运行部署在工作节点上的实际应用程序。</li>
+</ul>
+<h1 id="步骤-1准备-linux-主机">步骤 1：准备 Linux 主机</h1>
+<p><strong>硬件推荐配置</strong></p>
+<table>
+<thead>
+<tr>
+<th>操作系统</th>
+<th>最低配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ubuntu 16.04, 18.04</td>
+<td>2 核 CPU，4 GB 内存，40 GB 磁盘空间</td>
+</tr>
+<tr>
+<td>Debian Buster, Stretch</td>
+<td>2 核 CPU，4 GB 内存，40 GB 磁盘空间</td>
+</tr>
+<tr>
+<td>CentOS 7.x</td>
+<td>2 核 CPU，4 GB 内存，40 GB 磁盘空间</td>
+</tr>
+<tr>
+<td>Red Hat Enterprise Linux 7</td>
+<td>2 核 CPU，4 GB 内存，40 GB 磁盘空间Debian Buster, Stretch</td>
+</tr>
+<tr>
+<td>SUSE Linux Enterprise Server 15/openSUSE Leap 15.2</td>
+<td>2 核 CPU，4 GB 内存，40 GB 磁盘空间Debian Buster, Stretch</td>
+</tr>
+</tbody>
+</table>
+<p><strong>依赖项要求</strong></p>
+<p>KubeKey 可以将 Kubernetes 和 KubeSphere 一同安装。针对不同的 Kubernetes 版本，需要安装的依赖项可能有所不同。您可以参考以下列表，查看是否需要提前在节点上安装相关的依赖项。</p>
+<table>
+<thead>
+<tr>
+<th>依赖项</th>
+<th>Kubernetes 版本 ≥ 1.18</th>
+<th>Kubernetes 版本 &lt; 1.18</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>socat</td>
+<td>必须</td>
+<td>可选但建议</td>
+</tr>
+<tr>
+<td>conntrack</td>
+<td>必须</td>
+<td>可选但建议</td>
+</tr>
+<tr>
+<td>ebtables</td>
+<td>可选但建议</td>
+<td>可选但建议</td>
+</tr>
+<tr>
+<td>ipset</td>
+<td>可选但建议</td>
+<td>可选但建议</td>
+</tr>
+</tbody>
+</table>
+<p><strong>项目准备</strong></p>
+<table>
+<thead>
+<tr>
+<th>主机 IP</th>
+<th>主机名</th>
+<th>角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10.0.0.200</td>
+<td>control plane</td>
+<td>control plane, etcd</td>
+</tr>
+<tr>
+<td>10.0.0.201</td>
+<td>node01</td>
+<td>worker</td>
+</tr>
+<tr>
+<td>10.0.0.202</td>
+<td>node02</td>
+<td>worker+harbor</td>
+</tr>
+</tbody>
+</table>
+<p><strong>节点要求</strong></p>
+<ul>
+<li>所有节点必须都能通过 SSH 访问。</li>
+<li>所有节点时间同步。</li>
+<li>所有节点都应使用 sudo/curl/openssl/tar。</li>
+</ul>
+<p>配置所有节点ssh互相访问：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1.三台机器分别执行以下命令
+</span></span><span class="line"><span class="cl">ssh-keygen
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.查看公钥
+</span></span><span class="line"><span class="cl">cat id_rsa.pub
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">3.把公钥加入到authorized_keys文件
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master ~/.ssh<span class="o">]</span><span class="c1"># cat authorized_keys </span>
+</span></span><span class="line"><span class="cl">ssh-rsa xxx root@master
+</span></span><span class="line"><span class="cl">ssh-rsa xxx root@node01
+</span></span><span class="line"><span class="cl">ssh-rsa xxx root@node02
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">4.验证
+</span></span><span class="line"><span class="cl">ssh 10.0.0.201 hostname
+</span></span><span class="line"><span class="cl">ssh 10.0.0.202 hostname
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="步骤-2下载-kubekey">步骤 2：下载 KubeKey</h1>
+<p>提前准备工作：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">#关闭防火墙
+</span></span><span class="line"><span class="cl">systemctl stop firewalld
+</span></span><span class="line"><span class="cl">systemctl disable firewalld
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#关闭 selinux
+</span></span><span class="line"><span class="cl">sentenforce 0
+</span></span><span class="line"><span class="cl">sed -i &#39;s/enforcing/disabled/&#39; /etc/selinux/config
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">#关闭 swap
+</span></span><span class="line"><span class="cl">swapoff -a  #临时
+</span></span><span class="line"><span class="cl">sed -ri &#39;s/.*swap.*/#&amp;/&#39; /etc/fstab  #永久
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>下载 KubeKey：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#创建kk目录</span>
+</span></span><span class="line"><span class="cl">mkdir /data <span class="o">&amp;&amp;</span> <span class="nb">cd</span> /data
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#如果您能正常访问 GitHub/Googleapis</span>
+</span></span><span class="line"><span class="cl">curl -sfL https://get-kk.kubesphere.io <span class="p">|</span> <span class="nv">VERSION</span><span class="o">=</span>v2.2.1 sh -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#如果您访问 GitHub/Googleapis 受限</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KKZONE</span><span class="o">=</span>cn
+</span></span><span class="line"><span class="cl">curl -sfL https://get-kk.kubesphere.io <span class="p">|</span> <span class="nv">VERSION</span><span class="o">=</span>v2.2.1 sh -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#为 kk 添加可执行权限：</span>
+</span></span><span class="line"><span class="cl">chmod +x kk
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="步骤-3创建集群">步骤 3：创建集群</h1>
+<p>对于多节点安装，您需要通过指定配置文件来创建集群。</p>
+<h2 id="1-创建示例配置文件">1. 创建示例配置文件</h2>
+<p>命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./kk create config --with-kubernetes v1.22.10 --with-kubesphere v3.3.0
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="2-编辑配置文件">2. 编辑配置文件</h2>
+<p>如果您不更改名称，那么将创建默认文件 config-sample.yaml。编辑文件，以下是多节点集群（具有一个主节点）配置文件的示例。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">apiVersion: kubekey.kubesphere.io/v1alpha2
+</span></span><span class="line"><span class="cl">kind: Cluster
+</span></span><span class="line"><span class="cl">metadata:
+</span></span><span class="line"><span class="cl">  name: sample
+</span></span><span class="line"><span class="cl">spec:
+</span></span><span class="line"><span class="cl">  hosts:
+</span></span><span class="line"><span class="cl">  - <span class="o">{</span>name: master, address: 10.0.0.200, internalAddress: 10.0.0.200, privateKeyPath: <span class="s2">&#34;~/.ssh/id_rsa&#34;</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl">  - <span class="o">{</span>name: node01, address: 10.0.0.201, internalAddress: 10.0.0.201, privateKeyPath: <span class="s2">&#34;~/.ssh/id_rsa&#34;</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl">  - <span class="o">{</span>name: node02, address: 10.0.0.202, internalAddress: 10.0.0.202, privateKeyPath: <span class="s2">&#34;~/.ssh/id_rsa&#34;</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl">  roleGroups:
+</span></span><span class="line"><span class="cl">    etcd:
+</span></span><span class="line"><span class="cl">    - master
+</span></span><span class="line"><span class="cl">    control-plane:
+</span></span><span class="line"><span class="cl">    - master
+</span></span><span class="line"><span class="cl">    worker:
+</span></span><span class="line"><span class="cl">    - node01
+</span></span><span class="line"><span class="cl">    - node02
+</span></span><span class="line"><span class="cl">    registry:
+</span></span><span class="line"><span class="cl">    - node02
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">network:
+</span></span><span class="line"><span class="cl">    plugin: calico
+</span></span><span class="line"><span class="cl">    kubePodsCIDR: 10.233.64.0/18
+</span></span><span class="line"><span class="cl">    kubeServiceCIDR: 10.233.0.0/18
+</span></span><span class="line"><span class="cl">    <span class="c1">## multus support. https://github.com/k8snetworkplumbingwg/multus-cni</span>
+</span></span><span class="line"><span class="cl">    multusCNI:
+</span></span><span class="line"><span class="cl">      enabled: <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">  registry:
+</span></span><span class="line"><span class="cl">    type: harbor
+</span></span><span class="line"><span class="cl">    privateRegistry: <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    namespaceOverride: <span class="s2">&#34;&#34;</span>
+</span></span><span class="line"><span class="cl">    registryMirrors: <span class="o">[]</span>
+</span></span><span class="line"><span class="cl">    insecureRegistries: <span class="o">[]</span>
+</span></span><span class="line"><span class="cl">  addons: <span class="o">[]</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  alerting:
+</span></span><span class="line"><span class="cl">    enabled: <span class="nb">true</span>    <span class="c1">#告警系统</span>
+</span></span><span class="line"><span class="cl">  auditing:
+</span></span><span class="line"><span class="cl">    enabled: <span class="nb">true</span>    <span class="c1">#审计日志</span>
+</span></span><span class="line"><span class="cl">  devops:
+</span></span><span class="line"><span class="cl">    enabled: <span class="nb">true</span>    <span class="c1">#devops</span>
+</span></span><span class="line"><span class="cl">  openpitrix:
+</span></span><span class="line"><span class="cl">    store:
+</span></span><span class="line"><span class="cl">      enabled: <span class="nb">true</span>  <span class="c1">#应用商店</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>备注：
+<strong>roleGroups</strong></p>
+<ul>
+<li>etcd：etcd 节点名称</li>
+<li>control-plane：主节点名称</li>
+<li>worker：工作节点名称</li>
+</ul>
+</blockquote>
+<p><strong>使用 SSH 密钥的无密码登录示例：</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hosts:
+</span></span><span class="line"><span class="cl">  - <span class="o">{</span>name: master, address: 10.0.0.200, internalAddress: 10.0.0.200, privateKeyPath: <span class="s2">&#34;~/.ssh/id_rsa&#34;</span><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="3-使用配置文件创建集群">3. 使用配置文件创建集群</h2>
+<p><strong>备注：每个节点安装依赖项</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">yum install -y  socat conntrack ebtables ipset
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>安装集群</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./kk create cluster -f config-sample.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="4-验证安装">4. 验证安装</h2>
+<p>执行以下命令查看集群状态：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kubectl logs -n kubesphere-system <span class="k">$(</span>kubectl get pod -n kubesphere-system -l <span class="s1">&#39;app in (ks-install, ks-installer)&#39;</span> -o <span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.items[0].metadata.name}&#39;</span><span class="k">)</span> -f
+</span></span></code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>报错：提示 -bash: kubectl: command not found ，这里配置环境变量使之生效</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">[</span>root@master ~<span class="o">]</span><span class="c1"># whereis is kubectl</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master ~<span class="o">]</span><span class="c1"># vim /etc/profile              最后一行加入</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="s2">&#34;/usr/local/bin/:</span><span class="nv">$PATH</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@master ~<span class="o">]</span><span class="c1"># source /etc/profile</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>安装完成后，您会看到如下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#####################################################</span>
+</span></span><span class="line"><span class="cl"><span class="c1">###              Welcome to KubeSphere!           ###</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#####################################################</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Console: http://10.0.0.200:30880
+</span></span><span class="line"><span class="cl">Account: admin
+</span></span><span class="line"><span class="cl">Password: P@88w0rd
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">NOTES：
+</span></span><span class="line"><span class="cl">  1. After you log into the console, please check the
+</span></span><span class="line"><span class="cl">     monitoring status of service components in
+</span></span><span class="line"><span class="cl">     the <span class="s2">&#34;Cluster Management&#34;</span>. If any service is not
+</span></span><span class="line"><span class="cl">     ready, please <span class="nb">wait</span> patiently <span class="k">until</span> all components
+</span></span><span class="line"><span class="cl">     are up and running.
+</span></span><span class="line"><span class="cl">  2. Please change the default password after login.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#####################################################</span>
+</span></span><span class="line"><span class="cl">https://kubesphere.io             20xx-xx-xx xx:xx:xx
+</span></span><span class="line"><span class="cl"><span class="c1">#####################################################</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>现在，您可以通过 &lt;NodeIP:30880 使用默认帐户和密码 (admin/P@88w0rd) 访问 KubeSphere 的 Web 控制台。</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="https://kubesphere.com.cn/images/docs/v3.3/zh-cn/upgrade/air-gapped-upgrade-with-ks-installer/kubesphere-login.PNG"
+        data-srcset="https://kubesphere.com.cn/images/docs/v3.3/zh-cn/upgrade/air-gapped-upgrade-with-ks-installer/kubesphere-login.PNG, https://kubesphere.com.cn/images/docs/v3.3/zh-cn/upgrade/air-gapped-upgrade-with-ks-installer/kubesphere-login.PNG 1.5x, https://kubesphere.com.cn/images/docs/v3.3/zh-cn/upgrade/air-gapped-upgrade-with-ks-installer/kubesphere-login.PNG 2x"
+        data-sizes="auto"
+        alt="https://kubesphere.com.cn/images/docs/v3.3/zh-cn/upgrade/air-gapped-upgrade-with-ks-installer/kubesphere-login.PNG"
+        title="image" /></p>
+<h1 id="步骤-4启用-kubectl-自动补全">步骤 4：启用 kubectl 自动补全</h1>
+<p>KubeKey 不会启用 kubectl 自动补全功能，请参见以下内容并将其打开：</p>
+<blockquote>
+<p>备注：</p>
+<p>请确保已安装 bash-autocompletion 并可以正常工作。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1"># Install bash-completion</span>
+</span></span><span class="line"><span class="cl">apt-get install bash-completion
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Source the completion script in your ~/.bashrc file</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;source &lt;(kubectl completion bash)&#39;</span> &gt;&gt;~/.bashrc
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># Add the completion script to the /etc/bash_completion.d directory</span>
+</span></span><span class="line"><span class="cl">kubectl completion bash &gt;/etc/bash_completion.d/kubectl
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h1 id="步骤-5安装内网穿透工具-zerotier">步骤 5：安装内网穿透工具 ZeroTier</h1>
+<h2 id="1注册账号">1.注册账号</h2>
+<p>访问：https://www.zerotier.com/ 注册账号；</p>
+<h2 id="2创建虚拟网络">2.创建虚拟网络</h2>
+<ol>
+<li>点击“Create A Network”创建一个虚拟网络：</li>
+<li>记住Network ID，后边会用到；
+Name随便写；
+Access Control选择：PRIVATE；</li>
+</ol>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="http://cdn.linuxwf.com/img/20221020115538.png"
+        data-srcset="http://cdn.linuxwf.com/img/20221020115538.png, http://cdn.linuxwf.com/img/20221020115538.png 1.5x, http://cdn.linuxwf.com/img/20221020115538.png 2x"
+        data-sizes="auto"
+        alt="http://cdn.linuxwf.com/img/20221020115538.png"
+        title="http://cdn.linuxwf.com/img/20221020115538.png" /></p>
+<h2 id="3配置网段">3.配置网段</h2>
+<ol>
+<li>IPV4 Auto-Assign 选择“Easy”，然后从下发的网段选择一个即可；</li>
+<li>这里选择的是10.242.<em>.</em>，上方的Managed Routes会自动修改为：10.242.0.0/16 (LAN);</li>
+<li>表示：10.242.*.*的虚拟网段，由ZeroTier进行路由转发；</li>
+</ol>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="http://cdn.linuxwf.com/img/20221020112550.png"
+        data-srcset="http://cdn.linuxwf.com/img/20221020112550.png, http://cdn.linuxwf.com/img/20221020112550.png 1.5x, http://cdn.linuxwf.com/img/20221020112550.png 2x"
+        data-sizes="auto"
+        alt="http://cdn.linuxwf.com/img/20221020112550.png"
+        title="http://cdn.linuxwf.com/img/20221020112550.png" /></p>
+<ol start="4">
+<li>剩下部分保留默认配置即可；接下来配置客户端。</li>
+</ol>
+<h2 id="4客户端配置">4.客户端配置</h2>
+<ol>
+<li>
+<p>下载并安装ZeroTier客户端：https://www.zerotier.com/download/</p>
+</li>
+<li>
+<p>按照官网提示，安装ZeroTier客户端即可；</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -s https://install.zerotier.com <span class="p">|</span> sudo bash
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>若需要，可以通过以下命令获取设备的address地址：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat /var/lib/zerotier-one/identity.public <span class="p">|</span>cut -d : -f <span class="m">1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div></li>
+<li>
+<p>配置客户端，加入虚拟网络：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zerotier-cli join &lt;Network ID&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>MacOS和Windows系统，打开客户端，粘贴Network ID，然后点击“Join Network”：</p>
+</li>
+<li>
+<p>回到管理UI，找到刚刚申请加入的设备，点击左侧的“Auth?”复选框，给新加入的设备授权：</p>
+<blockquote>
+<p>“Name”随便写；
+“Managed IPs”，输入“10.242.0.0”至“10.242.255.255”之间的任意IP，网段对应上一步创建的网段即可；
+点击“Managed IPs”左侧的“+”，生成虚拟IP；</p>
+</blockquote>
+</li>
+</ol>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="http://cdn.linuxwf.com/img/20221020115412.png"
+        data-srcset="http://cdn.linuxwf.com/img/20221020115412.png, http://cdn.linuxwf.com/img/20221020115412.png 1.5x, http://cdn.linuxwf.com/img/20221020115412.png 2x"
+        data-sizes="auto"
+        alt="http://cdn.linuxwf.com/img/20221020115412.png"
+        title="http://cdn.linuxwf.com/img/20221020115412.png" /></p>
+<ol start="5">
+<li>客户端配置完成；可以回到客户端，查看是否正常：</li>
+<li>将多个设备加入虚拟网络；如果是云服务器，记得开放相应的端口；</li>
+<li>多个设备之间，可以使用虚拟IP互联；</li>
+</ol>
+<h2 id="5moon节点配置">5.moon节点配置</h2>
+<p>官方的节点，速度比较慢；可以通过自建中继节点（moon）的方式，提高连接速度；
+自建的moon节点服务器必须有外网IP，才有意义；</p>
+<ol>
+<li>在Linux的服务器上，配置moon服务器：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> /var/lib/zerotier-one
+</span></span><span class="line"><span class="cl"><span class="c1">#生成moon</span>
+</span></span><span class="line"><span class="cl">zerotier-idtool initmoon identity.public &gt;&gt;moon.json
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>修改 moon.json文件的id地址、stableEndpoints值</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;12345678&#34;</span>,
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;stableEndpoints&#34;</span>: <span class="o">[</span><span class="s2">&#34;1.2.3.4/9993&#34;</span><span class="o">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>启动moon服务器：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#生成签名文件</span>
+</span></span><span class="line"><span class="cl">zerotier-idtool genmoon moon.json                <span class="c1">#会生成类似：000000xxxxxxxx.moon的文件</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#将 moon 节点加入网络</span>
+</span></span><span class="line"><span class="cl">mkdir moons.d
+</span></span><span class="line"><span class="cl">cp 000000xxxxxxxx.moon /moons.d/
+</span></span><span class="line"><span class="cl">systemctl restart zerotier-one.service
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>其他客户端连接moon服务器：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#Linux</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#连接moon节点：</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#注意这里的12345678为上边moon.json里的id</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#orbit后边跟两个id</span>
+</span></span><span class="line"><span class="cl">zerotier-cli orbit <span class="m">12345678</span> <span class="m">12345678</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="5">
+<li>如果是Windows系统：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">C:<span class="se">\P</span>rogram Files <span class="o">(</span>x86<span class="o">)</span><span class="se">\Z</span>eroTier<span class="se">\O</span>ne&gt; .<span class="se">\z</span>erotier-cli.bat orbit <span class="m">12345678</span> <span class="m">12345678</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="6">
+<li>查看节点连接信息：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zerotier-cli listpeers
+</span></span><span class="line"><span class="cl"><span class="c1">#结果中可以看到新加入的moon节点；</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#如果没有，可以稍等一会；</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="7">
+<li>卸载Zerotier-one</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">1.通过dpkg删除zerotier-one服务
+</span></span><span class="line"><span class="cl">dpkg -P zerotier-one
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2.删除zerotier-one文件夹，该文件夹存储了address地址，删除后再次安装会获得新的address地址
+</span></span><span class="line"><span class="cl">rm -rf /var/lib/zerotier-one/
+</span></span></code></pre></td></tr></table>
+</div>
+</div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>更新于 2022-11-05</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span>
+                            <a class="link-to-markdown" href="/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/index.md" target="_blank">阅读原始文档</a>
+                        </span></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="分享到 Twitter" data-sharer="twitter" data-url="https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" data-title="1.多节点安装ks&#43;k8s" data-hashtags="KubeSphere,k8s"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Facebook" data-sharer="facebook" data-url="https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" data-hashtag="KubeSphere"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Hacker News" data-sharer="hackernews" data-url="https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" data-title="1.多节点安装ks&#43;k8s"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 Line" data-sharer="line" data-url="https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" data-title="1.多节点安装ks&#43;k8s"><i data-svg-src="https://cdn.jsdelivr.net/npm/simple-icons@7.3.0/icons/line.svg" aria-hidden="true"></i></a><a href="javascript:void(0);" title="分享到 微博" data-sharer="weibo" data-url="https://xinian888.github.io/1.%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85ks-k8s/" data-title="1.多节点安装ks&#43;k8s" data-ralateuid="xxxx"><i class="fab fa-weibo fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/kubesphere/">KubeSphere</a>,&nbsp;<a href="/tags/k8s/">k8s</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">返回</a></span>&nbsp;|&nbsp;<span><a href="/">主页</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+            <a href="/docker%E5%AE%89%E8%A3%85%E6%90%AD%E5%BB%BAloki-promtail-grafana%E6%94%B6%E9%9B%86%E5%AE%B9%E5%99%A8%E6%97%A5%E5%BF%97/" class="next" rel="next" title="Docker安装搭建loki&#43;promtail&#43;grafana收集容器日志">Docker安装搭建loki+promtail+grafana收集容器日志<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+<div id="comments"><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">由 <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.105.0">Hugo</a> 强力驱动 | 主题 - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2019 - 2022</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="https://xinian888.github.io" target="_blank">昔年</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="回到顶部">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="查看评论">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/css/lightgallery-bundle.min.css"><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.5.0/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/autocomplete.js@0.38.1/dist/autocomplete.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/algoliasearch@4.13.1/dist/algoliasearch-lite.umd.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/thumbnail/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/zoom/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"复制到剪贴板","maxShownLines":50},"comment":{"valine":{"appId":"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI","appKey":"WBmoGyJtbqUswvfLh6L8iEBr","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"zh-CN","pageSize":10,"placeholder":"你的评论 ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"lightgallery":true,"search":{"algoliaAppID":"PASDMWALPK","algoliaIndex":"index.zh-cn","algoliaSearchKey":"b42948e51daaa93df92381c8e2ac0f93","highlightTag":"em","maxResultLength":10,"noResultsFound":"没有找到结果","snippetLength":50,"type":"algolia"}};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
